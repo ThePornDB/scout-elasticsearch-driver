@@ -8,193 +8,193 @@ use ScoutElastic\Indexers\SingleIndexer;
 
 class SingleIndexerTest extends AbstractIndexerTest
 {
-	public function testUpdateWithDisabledSoftDelete(): void
-	{
-		Config::set('scout.soft_delete', false);
+    public function testDelete(): void
+    {
+        ElasticClient::shouldReceive('delete')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 1,
+                'client' => [
+                    'ignore' => 404,
+                ],
+            ])
+            ->shouldReceive('delete')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 2,
+                'client' => [
+                    'ignore' => 404,
+                ],
+            ])
+            ->shouldReceive('delete')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 3,
+                'client' => [
+                    'ignore' => 404,
+                ],
+            ]);
 
-		ElasticClient::shouldReceive('index')
-			->once()
-			->with([
-				'index' => 'test',
-				'type'  => 'test',
-				'id'    => 1,
-				'body'  => [
-					'name' => 'foo',
-				],
-			])
-			->shouldReceive('index')
-			->once()
-			->with([
-				'index' => 'test',
-				'type'  => 'test',
-				'id'    => 2,
-				'body'  => [
-					'name' => 'bar',
-				],
-			]);
+        (new SingleIndexer())
+            ->delete($this->models);
 
-		(new SingleIndexer())
-			->update($this->models);
+        $this->addToAssertionCount(1);
+    }
 
-		$this->addToAssertionCount(1);
-	}
+    public function testDeleteWithSpecifiedDocumentRefreshOption(): void
+    {
+        Config::set('scout_elastic.document_refresh', true);
 
-	public function testUpdateWithEnabledSoftDelete(): void
-	{
-		Config::set('scout.soft_delete', true);
+        ElasticClient::shouldReceive('delete')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 1,
+                'refresh' => true,
+                'client' => [
+                    'ignore' => 404,
+                ],
+            ])
+            ->shouldReceive('delete')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 2,
+                'refresh' => true,
+                'client' => [
+                    'ignore' => 404,
+                ],
+            ])
+            ->shouldReceive('delete')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 3,
+                'refresh' => true,
+                'client' => [
+                    'ignore' => 404,
+                ],
+            ]);
 
-		ElasticClient::shouldReceive('index')
-			->once()
-			->with([
-				'index' => 'test',
-				'type'  => 'test',
-				'id'    => 1,
-				'body'  => [
-					'name'           => 'foo',
-					'__soft_deleted' => 1,
-				],
-			])
-			->shouldReceive('index')
-			->once()
-			->with([
-				'index' => 'test',
-				'type'  => 'test',
-				'id'    => 2,
-				'body'  => [
-					'name'           => 'bar',
-					'__soft_deleted' => 0,
-				],
-			])
-			->shouldReceive('index')
-			->once()
-			->with([
-				'index' => 'test',
-				'type'  => 'test',
-				'id'    => 3,
-				'body'  => [
-					'__soft_deleted' => 0,
-				],
-			]);
+        (new SingleIndexer())
+            ->delete($this->models);
 
-		(new SingleIndexer())
-			->update($this->models);
+        $this->addToAssertionCount(1);
+    }
 
-		$this->addToAssertionCount(1);
-	}
+    public function testUpdateWithDisabledSoftDelete(): void
+    {
+        Config::set('scout.soft_delete', false);
 
-	public function testUpdateWithSpecifiedDocumentRefreshOption(): void
-	{
-		Config::set('scout_elastic.document_refresh', 'true');
+        ElasticClient::shouldReceive('index')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 1,
+                'body' => [
+                    'name' => 'foo',
+                ],
+            ])
+            ->shouldReceive('index')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 2,
+                'body' => [
+                    'name' => 'bar',
+                ],
+            ]);
 
-		ElasticClient::shouldReceive('index')
-			->once()
-			->with([
-				'index'   => 'test',
-				'type'    => 'test',
-				'refresh' => 'true',
-				'id'      => 1,
-				'body'    => [
-					'name' => 'foo',
-				],
-			])
-			->shouldReceive('index')
-			->once()
-			->with([
-				'index'   => 'test',
-				'type'    => 'test',
-				'refresh' => 'true',
-				'id'      => 2,
-				'body'    => [
-					'name' => 'bar',
-				],
-			]);
+        (new SingleIndexer())
+            ->update($this->models);
 
-		(new SingleIndexer())
-			->update($this->models);
+        $this->addToAssertionCount(1);
+    }
 
-		$this->addToAssertionCount(1);
-	}
+    public function testUpdateWithEnabledSoftDelete(): void
+    {
+        Config::set('scout.soft_delete', true);
 
-	public function testDelete(): void
-	{
-		ElasticClient::shouldReceive('delete')
-			->once()
-			->with([
-				'index'  => 'test',
-				'type'   => 'test',
-				'id'     => 1,
-				'client' => [
-					'ignore' => 404,
-				],
-			])
-			->shouldReceive('delete')
-			->once()
-			->with([
-				'index'  => 'test',
-				'type'   => 'test',
-				'id'     => 2,
-				'client' => [
-					'ignore' => 404,
-				],
-			])
-			->shouldReceive('delete')
-			->once()
-			->with([
-				'index'  => 'test',
-				'type'   => 'test',
-				'id'     => 3,
-				'client' => [
-					'ignore' => 404,
-				],
-			]);
+        ElasticClient::shouldReceive('index')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 1,
+                'body' => [
+                    'name' => 'foo',
+                    '__soft_deleted' => 1,
+                ],
+            ])
+            ->shouldReceive('index')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 2,
+                'body' => [
+                    'name' => 'bar',
+                    '__soft_deleted' => 0,
+                ],
+            ])
+            ->shouldReceive('index')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'id' => 3,
+                'body' => [
+                    '__soft_deleted' => 0,
+                ],
+            ]);
 
-		(new SingleIndexer())
-			->delete($this->models);
+        (new SingleIndexer())
+            ->update($this->models);
 
-		$this->addToAssertionCount(1);
-	}
+        $this->addToAssertionCount(1);
+    }
 
-	public function testDeleteWithSpecifiedDocumentRefreshOption(): void
-	{
-		Config::set('scout_elastic.document_refresh', true);
+    public function testUpdateWithSpecifiedDocumentRefreshOption(): void
+    {
+        Config::set('scout_elastic.document_refresh', 'true');
 
-		ElasticClient::shouldReceive('delete')
-			->once()
-			->with([
-				'index'   => 'test',
-				'type'    => 'test',
-				'id'      => 1,
-				'refresh' => true,
-				'client'  => [
-					'ignore' => 404,
-				],
-			])
-			->shouldReceive('delete')
-			->once()
-			->with([
-				'index'   => 'test',
-				'type'    => 'test',
-				'id'      => 2,
-				'refresh' => true,
-				'client'  => [
-					'ignore' => 404,
-				],
-			])
-			->shouldReceive('delete')
-			->once()
-			->with([
-				'index'   => 'test',
-				'type'    => 'test',
-				'id'      => 3,
-				'refresh' => true,
-				'client'  => [
-					'ignore' => 404,
-				],
-			]);
+        ElasticClient::shouldReceive('index')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'refresh' => 'true',
+                'id' => 1,
+                'body' => [
+                    'name' => 'foo',
+                ],
+            ])
+            ->shouldReceive('index')
+            ->once()
+            ->with([
+                'index' => 'test',
+                'type' => 'test',
+                'refresh' => 'true',
+                'id' => 2,
+                'body' => [
+                    'name' => 'bar',
+                ],
+            ]);
 
-		(new SingleIndexer())
-			->delete($this->models);
+        (new SingleIndexer())
+            ->update($this->models);
 
-		$this->addToAssertionCount(1);
-	}
+        $this->addToAssertionCount(1);
+    }
 }

@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Model extends \Illuminate\Database\Eloquent\Model
 {
-	use Searchable, SoftDeletes;
+    use Searchable;
+    use SoftDeletes;
 
-	public static function bootSearchable(): void
-	{
-		// do nothing
-	}
+    public static function bootSearchable(): void
+    {
+        // do nothing
+    }
 }

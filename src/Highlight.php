@@ -4,36 +4,36 @@ namespace ScoutElastic;
 
 class Highlight
 {
-	/**
-	 * The highlight array.
-	 */
-	private array $highlight = [];
+    /**
+     * The highlight array.
+     */
+    private array $highlight = [];
 
-	/**
-	 * Highlight constructor.
-	 *
-	 * @return void
-	 * @param  mixed[] $highlight
-	 */
-	public function __construct(array $highlight)
-	{
-		$this->highlight = $highlight;
-	}
+    /**
+     * Highlight constructor.
+     *
+     * @param  mixed[] $highlight
+     * @return void
+     */
+    public function __construct(array $highlight)
+    {
+        $this->highlight = $highlight;
+    }
 
-	/**
-	 * Get a value.
-	 *
-	 * @param  string            $key
-	 * @return null|mixed|string
-	 */
-	public function __get($key)
-	{
-		$field = str_replace('AsString', '', $key);
+    /**
+     * Get a value.
+     *
+     * @param  string            $key
+     * @return null|mixed|string
+     */
+    public function __get($key)
+    {
+        $field = str_replace('AsString', '', $key);
 
-		if (isset($this->highlight[$field])) {
-			$value = $this->highlight[$field];
+        if (isset($this->highlight[$field])) {
+            $value = $this->highlight[$field];
 
-			return $field === $key ? $value : implode(' ', $value);
-		}
-	}
+            return $field === $key ? $value : implode(' ', $value);
+        }
+    }
 }

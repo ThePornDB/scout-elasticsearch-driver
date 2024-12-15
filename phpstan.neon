@@ -1,9 +1,9 @@
+includes:
+    - phpstan-baseline.neon
+
 parameters:
     paths:
         - src
 
     # The level 8 is the highest level
     level: 1
-
-    ignoreErrors:
-        - '#Call to an undefined static method ScoutElastic\\Facades\\ElasticClient#'

@@ -1,0 +1,25 @@
+{
+  "preset": "psr12",
+  "rules": {
+    "cast_spaces": {
+      "space": "none"
+    },
+    "concat_space": {
+      "spacing": "one"
+    },
+    "ordered_imports": {
+      "sort_algorithm": "length"
+    },
+    "increment_style": {
+      "style": "pre"
+    },
+    "phpdoc_align": {
+      "align": "vertical"
+    },
+    "ordered_class_elements": {
+      "sort_algorithm": "alpha"
+    },
+    "not_operator_with_successor_space": false,
+    "declare_strict_types": false
+  }
+}

@@ -6,109 +6,109 @@ use Illuminate\Support\Arr;
 
 class RawPayload
 {
-	/**
-	 * The payload.
-	 */
-	protected array $payload = [];
+    /**
+     * The payload.
+     */
+    protected array $payload = [];
 
-	/**
-	 * Set a value.
-	 *
-	 */
-	public function set(string $key, $value)
-	{
-		Arr::set($this->payload, $key, $value);
+    /**
+     * Add a value.
+     *
+     */
+    public function add(string $key, $value): self
+    {
+        if (!is_null($key)) {
+            $currentValue = Arr::get($this->payload, $key, []);
 
-		return $this;
-	}
+            if (!is_array($currentValue)) {
+                $currentValue = Arr::wrap($currentValue);
+            }
 
-	/**
-	 * Unset a value.
-	 *
-	 */
-	public function unset($key): self
-	{
-		Arr::forget($this->payload, $key);
+            $currentValue[] = $value;
 
-		return $this;
-	}
+            Arr::set($this->payload, $key, $currentValue);
+        }
 
-	/**
-	 * Set a value if it's not empty.
-	 *
-	 */
-	public function setIfNotEmpty(string $key, $value): self
-	{
-		if (empty($value)) {
-			return $this;
-		}
+        return $this;
+    }
 
-		return $this->set($key, $value);
-	}
+    /**
+     * Add a value if it's not empty.
+     *
+     */
+    public function addIfNotEmpty(string $key, $value): self
+    {
+        if (empty($value)) {
+            return $this;
+        }
 
-	/**
-	 * Set a value if it's not null.
-	 *
-	 */
-	public function setIfNotNull(string $key, $value): self
-	{
-		if (is_null($value)) {
-			return $this;
-		}
+        return $this->add($key, $value);
+    }
 
-		return $this->set($key, $value);
-	}
+    /**
+     * Get value.
+     *
+     * @param null|string $key
+     * @param null|mixed  $default
+     */
+    public function get($key = null, $default = null)
+    {
+        return Arr::get($this->payload, $key, $default);
+    }
 
-	/**
-	 * Checks that the payload key has a value.
-	 */
-	public function has(string $key): bool
-	{
-		return Arr::has($this->payload, $key);
-	}
+    /**
+     * Checks that the payload key has a value.
+     */
+    public function has(string $key): bool
+    {
+        return Arr::has($this->payload, $key);
+    }
 
-	/**
-	 * Add a value.
-	 *
-	 */
-	public function add(string $key, $value): self
-	{
-		if (!is_null($key)) {
-			$currentValue = Arr::get($this->payload, $key, []);
+    /**
+     * Set a value.
+     *
+     */
+    public function set(string $key, $value)
+    {
+        Arr::set($this->payload, $key, $value);
 
-			if (!is_array($currentValue)) {
-				$currentValue = Arr::wrap($currentValue);
-			}
+        return $this;
+    }
 
-			$currentValue[] = $value;
+    /**
+     * Set a value if it's not empty.
+     *
+     */
+    public function setIfNotEmpty(string $key, $value): self
+    {
+        if (empty($value)) {
+            return $this;
+        }
 
-			Arr::set($this->payload, $key, $currentValue);
-		}
+        return $this->set($key, $value);
+    }
 
-		return $this;
-	}
+    /**
+     * Set a value if it's not null.
+     *
+     */
+    public function setIfNotNull(string $key, $value): self
+    {
+        if (is_null($value)) {
+            return $this;
+        }
 
-	/**
-	 * Add a value if it's not empty.
-	 *
-	 */
-	public function addIfNotEmpty(string $key, $value): self
-	{
-		if (empty($value)) {
-			return $this;
-		}
+        return $this->set($key, $value);
+    }
 
-		return $this->add($key, $value);
-	}
+    /**
+     * Unset a value.
+     *
+     */
+    public function unset($key): self
+    {
+        Arr::forget($this->payload, $key);
 
-	/**
-	 * Get value.
-	 *
-	 * @param null|string $key
-	 * @param null|mixed  $default
-	 */
-	public function get($key = null, $default = null)
-	{
-		return Arr::get($this->payload, $key, $default);
-	}
+        return $this;
+    }
 }

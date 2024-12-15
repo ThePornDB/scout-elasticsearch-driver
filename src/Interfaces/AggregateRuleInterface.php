@@ -4,8 +4,8 @@ namespace ScoutElastic\Interfaces;
 
 interface AggregateRuleInterface
 {
-	/**
-	 * @return mixed[]
-	 */
-	public function buildAggregatePayload(): array;
+    /**
+     * @return mixed[]
+     */
+    public function buildAggregatePayload(): array;
 }

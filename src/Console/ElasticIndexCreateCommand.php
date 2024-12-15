@@ -10,72 +10,72 @@ use ScoutElastic\Console\Features\RequiresIndexConfiguratorArgument;
 
 class ElasticIndexCreateCommand extends Command
 {
-	use RequiresIndexConfiguratorArgument;
+    use RequiresIndexConfiguratorArgument;
 
-	/**
-	 * {@inheritDoc}
-	 * @var string
-	 */
-	protected $name = 'elastic:create-index';
+    /**
+     * {@inheritDoc}
+     * @var string
+     */
+    protected $description = 'Create an Elasticsearch index';
 
-	/**
-	 * {@inheritDoc}
-	 * @var string
-	 */
-	protected $description = 'Create an Elasticsearch index';
+    /**
+     * {@inheritDoc}
+     * @var string
+     */
+    protected $name = 'elastic:create-index';
 
-	/**
-	 * Create an index.
-	 */
-	protected function createIndex(): void
-	{
-		$configurator = $this->getIndexConfigurator();
+    /**
+     * Handle the command.
+     */
+    public function handle(): void
+    {
+        $this->createIndex();
 
-		$payload = (new IndexPayload($configurator))
-			->setIfNotEmpty('body.settings', $configurator->getSettings())
-			->get();
+        $this->createWriteAlias();
+    }
 
-		ElasticClient::indices()
-			->create($payload);
+    /**
+     * Create an index.
+     */
+    protected function createIndex(): void
+    {
+        $configurator = $this->getIndexConfigurator();
 
-		$this->info(sprintf(
-			'The %s index was created!',
-			$configurator->getName()
-		));
-	}
+        $payload = (new IndexPayload($configurator))
+            ->setIfNotEmpty('body.settings', $configurator->getSettings())
+            ->get();
 
-	/**
-	 * Create an write alias.
-	 */
-	protected function createWriteAlias(): void
-	{
-		$configurator = $this->getIndexConfigurator();
+        ElasticClient::indices()
+            ->create($payload);
 
-		if (!in_array(Migratable::class, class_uses_recursive($configurator))) {
-			return;
-		}
+        $this->info(sprintf(
+            'The %s index was created!',
+            $configurator->getName()
+        ));
+    }
 
-		$payload = (new IndexPayload($configurator))
-			->set('name', $configurator->getWriteAlias())
-			->get();
+    /**
+     * Create an write alias.
+     */
+    protected function createWriteAlias(): void
+    {
+        $configurator = $this->getIndexConfigurator();
 
-		ElasticClient::indices()
-			->putAlias($payload);
+        if (!in_array(Migratable::class, class_uses_recursive($configurator))) {
+            return;
+        }
 
-		$this->info(sprintf(
-			'The %s alias for the %s index was created!',
-			$configurator->getWriteAlias(),
-			$configurator->getName()
-		));
-	}
+        $payload = (new IndexPayload($configurator))
+            ->set('name', $configurator->getWriteAlias())
+            ->get();
 
-	/**
-	 * Handle the command.
-	 */
-	public function handle(): void
-	{
-		$this->createIndex();
+        ElasticClient::indices()
+            ->putAlias($payload);
 
-		$this->createWriteAlias();
-	}
+        $this->info(sprintf(
+            'The %s alias for the %s index was created!',
+            $configurator->getWriteAlias(),
+            $configurator->getName()
+        ));
+    }
 }

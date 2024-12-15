@@ -8,39 +8,39 @@ use ScoutElastic\Interfaces\IndexConfiguratorInterface;
 
 trait RequiresIndexConfiguratorArgument
 {
-	/**
-	 * Get the index configurator.
-	 */
-	protected function getIndexConfigurator(): IndexConfiguratorInterface
-	{
-		$configuratorClass = trim($this->argument('index-configurator'));
+    /**
+     * Get the arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            [
+                'index-configurator',
+                InputArgument::REQUIRED,
+                'The index configurator class',
+            ],
+        ];
+    }
 
-		$configuratorInstance = new $configuratorClass();
+    /**
+     * Get the index configurator.
+     */
+    protected function getIndexConfigurator(): IndexConfiguratorInterface
+    {
+        $configuratorClass = trim($this->argument('index-configurator'));
 
-		if (!($configuratorInstance instanceof IndexConfiguratorInterface)) {
-			throw new InvalidArgumentException(sprintf(
-				'The class %s must implement %s.',
-				$configuratorClass,
-				IndexConfiguratorInterface::class
-			));
-		}
+        $configuratorInstance = new $configuratorClass();
 
-		return new $configuratorClass();
-	}
+        if (!($configuratorInstance instanceof IndexConfiguratorInterface)) {
+            throw new InvalidArgumentException(sprintf(
+                'The class %s must implement %s.',
+                $configuratorClass,
+                IndexConfiguratorInterface::class
+            ));
+        }
 
-	/**
-	 * Get the arguments.
-	 *
-	 * @return array
-	 */
-	protected function getArguments()
-	{
-		return [
-			[
-				'index-configurator',
-				InputArgument::REQUIRED,
-				'The index configurator class',
-			],
-		];
-	}
+        return new $configuratorClass();
+    }
 }

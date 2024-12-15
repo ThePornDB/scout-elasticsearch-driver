@@ -11,57 +11,58 @@ use ScoutElastic\Console\Features\RequiresIndexConfiguratorArgument;
 
 class ElasticIndexDropCommand extends Command
 {
-	use RequiresIndexConfiguratorArgument;
+    use RequiresIndexConfiguratorArgument;
 
-	/**
-	 * {@inheritDoc}
-	 * @var string
-	 */
-	protected $name = 'elastic:drop-index';
+    /**
+     * {@inheritDoc}
+     * @var string
+     */
+    protected $description = 'Drop an Elasticsearch index';
 
-	/**
-	 * {@inheritDoc}
-	 * @var string
-	 */
-	protected $description = 'Drop an Elasticsearch index';
+    /**
+     * {@inheritDoc}
+     * @var string
+     */
+    protected $name = 'elastic:drop-index';
 
-	/**
-	 * Handle the command.
-	 */
-	public function handle(): void
-	{
-		$configurator = $this->getIndexConfigurator();
-		$indexName = $this->resolveIndexName($configurator);
+    /**
+     * Handle the command.
+     */
+    public function handle(): void
+    {
+        $configurator = $this->getIndexConfigurator();
+        $indexName = $this->resolveIndexName($configurator);
 
-		$payload = (new RawPayload())
-			->set('index', $indexName)
-			->get();
+        $payload = (new RawPayload())
+            ->set('index', $indexName)
+            ->get();
 
-		ElasticClient::indices()
-			->delete($payload);
+        ElasticClient::indices()
+            ->delete($payload);
 
-		$this->info(sprintf(
-			'The index %s was deleted!',
-			$indexName
-		));
-	}
+        $this->info(sprintf(
+            'The index %s was deleted!',
+            $indexName
+        ));
+    }
 
-	/**
-	 * @return mixed|string|void
-	 */
-	protected function resolveIndexName(IndexConfiguratorInterface $configurator)
-	{
-		if (in_array(Migratable::class, class_uses_recursive($configurator))) {
-			$payload = (new RawPayload())
-				->set('name', $configurator->getWriteAlias())
-				->get();
+    /**
+     * @return mixed|string|void
+     */
+    protected function resolveIndexName(IndexConfiguratorInterface $configurator)
+    {
+        if (in_array(Migratable::class, class_uses_recursive($configurator))) {
+            $payload = (new RawPayload())
+                ->set('name', $configurator->getWriteAlias())
+                ->get();
 
-			$aliases = ElasticClient::indices()
-				->getAlias($payload);
+            $aliases = ElasticClient::indices()
+                ->getAlias($payload)
+                ->asArray();
 
-			return key($aliases);
-		}
+            return key($aliases);
+        }
 
-		return $configurator->getName();
-	}
+        return $configurator->getName();
+    }
 }
