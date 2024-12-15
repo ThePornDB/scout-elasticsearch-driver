@@ -40,8 +40,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ScoutElastic\\Tests\\": "tests/",
             "ScoutElastic\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ScoutElastic\\Tests\\": "tests/"
         }
     },
     "extra": {
@@ -49,11 +53,6 @@
             "providers": [
                 "ScoutElastic\\ScoutElasticServiceProvider"
             ]
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
         }
     }
 }
