@@ -5,8 +5,8 @@ namespace ScoutElastic\Console;
 use LogicException;
 use ScoutElastic\Migratable;
 use Illuminate\Console\Command;
-use ScoutElastic\Payloads\TypePayload;
 use ScoutElastic\Facades\ElasticClient;
+use ScoutElastic\Payloads\IndexPayload;
 use ScoutElastic\Console\Features\RequiresModelArgument;
 
 class ElasticUpdateMappingCommand extends Command
@@ -45,8 +45,8 @@ class ElasticUpdateMappingCommand extends Command
             throw new LogicException('Nothing to update: the mapping is not specified.');
         }
 
-        $payload = (new TypePayload($model))
-            ->set('body.' . $model->searchableAs(), $mapping);
+        $payload = (new IndexPayload($configurator))
+            ->set('body', $mapping);
 
         if (in_array(Migratable::class, class_uses_recursive($configurator))) {
             $payload->useAlias('write');
