@@ -111,11 +111,6 @@ trait Searchable
         return $query->with($this->searchableWith());
     }
 
-    public function makeSearchableUsing(BaseCollection $models)
-    {
-        return $models->each(fn (Model $model) => $model->loadMissing($model->searchableWith()));
-    }
-
     /**
      * Execute the search.
      *
