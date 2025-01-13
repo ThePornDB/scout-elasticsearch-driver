@@ -108,7 +108,7 @@ trait Searchable
 
     public function makeAllSearchableUsing(Builder $query): Builder
     {
-        return $query->with($this->searchableWith());
+        return $query->with(static::searchableWith());
     }
 
     /**
@@ -128,7 +128,7 @@ trait Searchable
         return new SearchBuilder(new static(), $query, $callback, $softDelete);
     }
 
-    public function searchableWith(): array
+    public static function searchableWith(): array
     {
         return [];
     }
