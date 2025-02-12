@@ -11,6 +11,7 @@ use ScoutElastic\ElasticEngine;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Arrayable;
 use ScoutElastic\Interfaces\AggregateRuleInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as ModelCollection;
@@ -697,13 +698,14 @@ class FilterBuilder extends Builder
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html Terms query
      *
-     * @param string $field
+     * @param string          $field
+     * @param Arrayable|array $values
      */
-    public function whereIn($field, array $value, string $boolean = 'must'): self
+    public function whereIn($field, $values, string $boolean = 'must'): self
     {
         $this->wheres[$boolean][] = [
             'terms' => [
-                $field => $value,
+                $field => $values,
             ],
         ];
 
@@ -828,14 +830,15 @@ class FilterBuilder extends Builder
 
     /**
      * Add a whereNotIn condition.
-     * @param string $field
+     * @param string          $field
+     * @param Arrayable|array $values
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html Terms query
      */
-    public function whereNotIn($field, array $value, string $boolean = 'must'): self
+    public function whereNotIn($field, $values, string $boolean = 'must'): self
     {
         $term = [
             'terms' => [
-                $field => $value,
+                $field => $values,
             ],
         ];
         $this->setNegativeCondition($term, $boolean);
